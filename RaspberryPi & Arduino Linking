@@ -1,0 +1,30 @@
+#라즈베리 파이에서 arduino 패키지 설치하기
+sudo apt-get install arduino
+
+#LXDE에서 arduino로 접근하기 위해 pi 계정에 tty dialout 그룹 지정
+sudo usermod -a -G tty pi
+sudo usermod -a -G dialout pi
+
+#아두이노 소스코드
+void setuo() {
+  Serial.begin(9600);
+}
+void loop() {
+  for (int n = 0; n<1024; n++) {
+     Serial.prinrln(n, DEC);
+     delay(500);
+  }
+}
+
+#라즈베리 파이 소스코드, 아두이노에서 시리얼 통신으로 보낸 값을 라즈베리 파이에서 반복해서 읽고 출력
+import serial
+
+port="/dev/ttyACM0"
+serialFromArduino = serial.Serial(port, 9600)
+serialFromArduino.flushInput()
+while True:
+    input_s = serialFromArduino.readline()
+    input = int(input_s)
+    print(input * 10)
+    
+#PuTTY(SSH)로 라즈베리 파이에 접속한 화면에서 SerialRead1.py를 실행하면 아두이노에서 전송된 값에 (*10)이 계산되어 출력됨 
